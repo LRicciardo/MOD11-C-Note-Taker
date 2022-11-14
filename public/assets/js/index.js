@@ -25,6 +25,7 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
+// get all stored notes
 const getNotes = () =>
   fetch('/api/notes', {
     method: 'GET',
@@ -33,6 +34,7 @@ const getNotes = () =>
     },
   });
 
+  // save a new note (will create an id)
 const saveNote = (note) =>
   fetch('/api/notes', {
     method: 'POST',
@@ -42,6 +44,7 @@ const saveNote = (note) =>
     body: JSON.stringify(note),
   });
 
+  // remove a note from storage
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
     method: 'DELETE',
@@ -50,6 +53,18 @@ const deleteNote = (id) =>
     },
   });
 
+// function to update a note that already exists
+const updateNote = (id,note) =>
+fetch(`/api/notes/${id}`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(note),
+});
+// >>>>>>>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<<<<<<
+
+// display note list on page
 const renderActiveNote = () => {
   hide(saveNoteBtn);
 
@@ -66,6 +81,7 @@ const renderActiveNote = () => {
   }
 };
 
+// save a new note and display in note list
 const handleNoteSave = () => {
   const newNote = {
     title: noteTitle.value,
@@ -90,6 +106,31 @@ const handleNoteDelete = (e) => {
   }
 
   deleteNote(noteId).then(() => {
+    getAndRenderNotes();
+    renderActiveNote();
+  });
+};
+
+// save a new note and display in note list
+const handleNoteUpdate = () => {
+  // Prevents the click listener for the list from being called when the button inside of it is clicked
+  e.stopPropagation();
+
+  // get the note from the click event target
+  const note = e.target;
+  // parse the note dataset element and get the id
+  const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+
+  // check to make sure the active note is the target note
+  if (activeNote.id === noteId) {
+    // update the active note
+    activeNote = {
+      title: noteTitle.value,
+      text: noteText.value,
+      id: noteId
+    };
+  }
+  updateNote(noteId,activeNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -133,6 +174,7 @@ const renderNoteList = async (notes) => {
     const spanEl = document.createElement('span');
     spanEl.classList.add('list-item-title');
     spanEl.innerText = text;
+    // performs the view function if the list item is clicked
     spanEl.addEventListener('click', handleNoteView);
 
     liEl.append(spanEl);
@@ -146,6 +188,7 @@ const renderNoteList = async (notes) => {
         'text-danger',
         'delete-note'
       );
+      // perform the delete function if the del button is clicked
       delBtnEl.addEventListener('click', handleNoteDelete);
 
       liEl.append(delBtnEl);
@@ -159,7 +202,9 @@ const renderNoteList = async (notes) => {
   }
 
   jsonNotes.forEach((note) => {
+    // creates a list item with the note title
     const li = createLi(note.title);
+    // puts the entire note in the data element
     li.dataset.note = JSON.stringify(note);
 
     noteListItems.push(li);

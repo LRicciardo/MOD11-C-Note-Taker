@@ -8,5 +8,10 @@
         "title": "App Startup",
         "text": "to start the application we need the following CLI=>\n1.  npm init -y   =====> to create the basic package.json file\n2.  npm i express =====> install the npm express library\n3.  npm i uuid =====> install the universal unique id library\n4.  npm i --save-dev nodemon =====> install node monitor that monitors the files for changes and restarts the server\n5.  ADD \"devStart\":  \"node run devStart\" to scripts in package.json\n6  npm run devStart =====> to start server with nodemon",
         "id": "8175375d-9100-484e-b2f8-24d74b0b773e"
+    },
+    {
+        "title": "This note is new",
+        "text": "Trying to display note",
+        "id": "a3984841-2e68-49d5-a093-df1668097003"
     }
 ]
