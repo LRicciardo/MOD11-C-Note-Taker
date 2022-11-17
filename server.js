@@ -3,6 +3,9 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 
+// defines router to API server code
+const notes = require("./routes/notes");
+
 // Sets the assigned PORT for the environment
 const PORT = process.env.PORT || 3001;
 
@@ -16,6 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 // localtion of static (unchanging) files
 app.use(express.static('public'));
 
+//  defines the path to the endpoint for API server code
+app.use("/api/notes", notes);
+
 // GET Route for notes html page
 app.get('/notes', (req, res) =>
 res.sendFile(path.join(__dirname, '/public/notes.html'))
@@ -26,11 +32,6 @@ res.sendFile(path.join(__dirname, '/public/notes.html'))
 app.get('*', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
-
-// defines router to API server code
-const notes = require("./routes/notes");
-//  defines the path to the endpoint for API server code
-app.use("/api/notes", notes);
 
 // opens the LISTENER to the port defined above
 app.listen(PORT, () =>

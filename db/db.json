@@ -1,7 +1,7 @@
 [
     {
-        "title": "New Note",
-        "text": "Trying out this note system\n",
+        "title": "Grocery List",
+        "text": "eggs\nbacon\nham\nlettuce\ntomatoes\ncheese-American-white-sliced\nsalami\nchicken breast\nfruit\nartichokes",
         "id": "1bd53906-ef2f-47d7-9fd2-246923e4cf90"
     },
     {
@@ -10,8 +10,13 @@
         "id": "8175375d-9100-484e-b2f8-24d74b0b773e"
     },
     {
-        "title": "This note is new",
+        "title": "Changing this note",
         "text": "Trying to display note",
         "id": "a3984841-2e68-49d5-a093-df1668097003"
+    },
+    {
+        "title": "Adding note Here",
+        "text": "show I can add note",
+        "id": "084da78a-5e23-401a-952c-b5e1f7a0fc89"
     }
 ]

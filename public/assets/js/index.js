@@ -55,42 +55,65 @@ const deleteNote = (id) =>
 
 // function to update a note that already exists
 const updateNote = (id,note) =>
-fetch(`/api/notes/${id}`, {
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(note),
-});
-// >>>>>>>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<<<<<<
+  fetch(`/api/notes/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(note)
+  });
+// *^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*
 
 // display note list on page
 const renderActiveNote = () => {
   hide(saveNoteBtn);
 
   if (activeNote.id) {
-    noteTitle.setAttribute('readonly', true);
-    noteText.setAttribute('readonly', true);
+    // noteTitle.setAttribute('readonly', true);
+    // noteText.setAttribute('readonly', true);
     noteTitle.value = activeNote.title;
     noteText.value = activeNote.text;
   } else {
-    noteTitle.removeAttribute('readonly');
-    noteText.removeAttribute('readonly');
+    // noteTitle.removeAttribute('readonly');
+    // noteText.removeAttribute('readonly');
     noteTitle.value = '';
     noteText.value = '';
   }
 };
 
 // save a new note and display in note list
-const handleNoteSave = () => {
-  const newNote = {
-    title: noteTitle.value,
-    text: noteText.value,
-  };
-  saveNote(newNote).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
+const handleNoteSave = (e) => {
+   // Prevents the click listener for the list from being called when the button inside of it is clicked
+   e.stopPropagation();
+
+   // get the note from the click event target
+   const note = e.target;
+  //  console.log(activeNote.id.length)
+  //  console.log(activeNote.id)
+  //  const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+  
+  if (activeNote.id) {
+      console.log(activeNote.id)
+      // update the active note
+      const updNote = {
+        title: noteTitle.value.trim(),
+        text: noteText.value.trim(),
+        id: activeNote.id
+      };
+      updateNote(activeNote.id,updNote).then(() => {
+        getAndRenderNotes();
+        renderActiveNote();
+      });
+    } else {
+      const newNote = {
+        title: noteTitle.value.trim(),
+        text: noteText.value.trim(),
+      };
+      saveNote(newNote).then(() => {
+        getAndRenderNotes();
+        renderActiveNote();
+      });
+    };
 };
 
 // Delete the clicked note
@@ -106,31 +129,6 @@ const handleNoteDelete = (e) => {
   }
 
   deleteNote(noteId).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
-};
-
-// save a new note and display in note list
-const handleNoteUpdate = () => {
-  // Prevents the click listener for the list from being called when the button inside of it is clicked
-  e.stopPropagation();
-
-  // get the note from the click event target
-  const note = e.target;
-  // parse the note dataset element and get the id
-  const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
-
-  // check to make sure the active note is the target note
-  if (activeNote.id === noteId) {
-    // update the active note
-    activeNote = {
-      title: noteTitle.value,
-      text: noteText.value,
-      id: noteId
-    };
-  }
-  updateNote(noteId,activeNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -174,7 +172,7 @@ const renderNoteList = async (notes) => {
     const spanEl = document.createElement('span');
     spanEl.classList.add('list-item-title');
     spanEl.innerText = text;
-    // performs the view function if the list item is clicked
+    // adds an "onclick" event listener to each note in list
     spanEl.addEventListener('click', handleNoteView);
 
     liEl.append(spanEl);
@@ -201,16 +199,22 @@ const renderNoteList = async (notes) => {
     noteListItems.push(createLi('No saved Notes', false));
   }
 
+  // for each note in the json file, 
+  // create an <li> element 
+  // and add it onto the note li array
   jsonNotes.forEach((note) => {
     // creates a list item with the note title
     const li = createLi(note.title);
-    // puts the entire note in the data element
+    // store the entire note in the data element(really?)
     li.dataset.note = JSON.stringify(note);
 
     noteListItems.push(li);
   });
 
+  // >*> Why is a location needed for this?
   if (window.location.pathname === '/notes') {
+    // for each <li> note in the note li array, 
+    // append them to the parent <ul>
     noteListItems.forEach((note) => noteList[0].append(note));
   }
 };
@@ -218,6 +222,9 @@ const renderNoteList = async (notes) => {
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
+// add event listeners to:
+//   click events:     the save button, add new note button,
+//   keystroke event:  the note title area, and the note text area
 if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', handleNewNoteView);

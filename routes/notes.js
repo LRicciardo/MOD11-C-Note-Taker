@@ -16,34 +16,35 @@ notes.get('/', (req, res) => {
 
 // POST Route for a new UX/UI note
 notes.post('/', (req, res) => {
+  console.log("post input request body");
   console.log(req.body);
-    // Log that a POST request was received
-    console.info(`${req.method} request received to add a note`);
+  // Log that a POST request was received
+  console.info(`${req.method} request received to add a note`);
 
-// Destructuring assignment for the items in req.body
-const { title, text, } = req.body;
+  // Destructuring assignment for the items in req.body
+  const { title, text, } = req.body;
 
-// If all the required properties are present
-if (title && text) {
-  console.log("inside if")
-  // Variable for the object we will save
-  const newNote = {
-    title,
-    text,
-    id: uuidv4(),
-  };
+  // If all the required properties are present
+  if (title && text) {
+    console.log("inside if: notes.post")
+    // Variable for the object we will save
+    const newNote = {
+      title,
+      text,
+      id: uuidv4(),
+    };
 
     readAndAppend(newNote, './db/db.json');
-  //   res.json(`note added successfully 🚀`);
-  // } else {
-  //   res.error('Error in adding note');
-  // }
+    //   res.json(`note added successfully 🚀`);
+    // } else {
+    //   res.error('Error in adding note');
+    // }
     const response = {
       status: 'success',
-      body: `New Note was added to db! 
-      Title: ${JSON.stringify(newNote.title)}, 
-      Text: ${JSON.stringify(newNote.text)}, 
-      ID: ${newNote.id}`,
+      body: `POST Note successful 
+      title: ${JSON.stringify(newNote.title)}, 
+      text: ${JSON.stringify(newNote.text)}, 
+      id: ${newNote.id}`,
     };
 
     console.log(response);
@@ -63,10 +64,12 @@ notes
     readFromFile('./db/db.json')
       .then((data) => JSON.parse(data))
       .then((json) => {
+        // Create a new array of all notes 
+        //   with only the one with the ID provided in the URL
         const result = json.filter((note) => note.id === note_id);
         return result.length > 0
           ? res.json(result)
-          : res.json(`No note with ID ${note_id} `);
+          : res.json(`Get:id=> No note with ID ${note_id} `);
       });
   })
   // PUT Route for a specific note
@@ -76,10 +79,16 @@ notes
     readFromFile('./db/db.json')
       .then((data) => JSON.parse(data))
       .then((json) => {
-        const index = json.findIndex(note_id);
-        return index > -1
-          ? writeToFile('./db/db.json', res.json(updateNote(json, index)))
-          : res.json(`No note with ID ${note_id} `);
+        const notes = json;
+        const index = notes.findIndex(note => note_id === note.id);
+        if (index !== -1) {
+          notes[index].title = req.body.title;
+          notes[index].text = req.body.text;
+          writeToFile('./db/db.json', notes);
+          res.json(`PUT:id=> Updated note with ID ${note_id} `);
+        } else { 
+          res.json(`PUT:id=> No note with ID ${note_id} `);
+        }     
       });
   })
   // DELETE Route for a specific note
@@ -89,14 +98,15 @@ notes
     readFromFile('./db/db.json')
       .then((data) => JSON.parse(data))
       .then((json) => {
-        // Make a new array of all notes except the one with the ID provided in the URL
+        // Create a new array of all notes 
+        //   except the one with the ID provided in the URL
         const result = json.filter((note) => note.id !== note_id);
 
         // Save that array to the filesystem
         writeToFile('./db/db.json', result);
 
         // Respond to the DELETE request
-        res.json(`Item ${note_id} has been deleted 🗑️`);
+        res.json(`DELETE:id=> Note ${note_id} has been deleted 🗑️`);
       });
   });
 
@@ -105,15 +115,7 @@ notes
     next();
   })
 
-function updateNote (note, index) {
-    console.log("updating note")
-    note(index).title = req.body.title;
-    note(index).text = req.body.text;
-    // id stays the same
-    return note;
-  }
-
-function logger (req, res, next) {
+  function logger (req, res, next) {
     console.log("log route url", req.originalUrl)
     next()
   }
