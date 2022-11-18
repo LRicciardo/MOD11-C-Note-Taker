@@ -101,6 +101,7 @@ const handleNoteSave = (e) => {
         id: activeNote.id
       };
       updateNote(activeNote.id,updNote).then(() => {
+        activeNote = updNote;
         getAndRenderNotes();
         renderActiveNote();
       });

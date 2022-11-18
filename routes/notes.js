@@ -85,7 +85,7 @@ notes
           notes[index].title = req.body.title;
           notes[index].text = req.body.text;
           writeToFile('./db/db.json', notes);
-          res.json(`PUT:id=> Updated note with ID ${note_id} `);
+          res.json(notes);
         } else { 
           res.json(`PUT:id=> No note with ID ${note_id} `);
         }     

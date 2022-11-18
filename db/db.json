@@ -1,7 +1,7 @@
 [
     {
         "title": "Grocery List",
-        "text": "eggs\nbacon\nham\nlettuce\ntomatoes\ncheese-American-white-sliced\nsalami\nchicken breast\nfruit\nartichokes",
+        "text": "eggs\nbacon\nham\nlettuce\ntomatoes\ncheese-American-white-sliced\nsalami\nchicken breast\nfruit and veggies",
         "id": "1bd53906-ef2f-47d7-9fd2-246923e4cf90"
     },
     {
@@ -11,12 +11,12 @@
     },
     {
         "title": "Changing this note",
-        "text": "Trying to display note",
+        "text": "we changing this not for the better",
         "id": "a3984841-2e68-49d5-a093-df1668097003"
     },
     {
         "title": "Adding note Here",
-        "text": "show I can add note",
+        "text": "changing it here",
         "id": "084da78a-5e23-401a-952c-b5e1f7a0fc89"
     }
 ]
